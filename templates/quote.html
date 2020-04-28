@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quote
+{% endblock %}
+
+{% block main %}
+    <form action="/quote" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="symbol" placeholder="Symbol" type="text" maxlength="5" id="symbol">
+        </div>
+        <button class="btn btn-primary" type="submit" id="submit" disabled>Quote</button>
+    </form>
+
+    <script>
+        // Check to make sure text is entered in the symbol text field and disable to prevent empty queries
+        document.querySelector("#symbol").onkeyup = function()
+        {
+            if (document.querySelector("#symbol").value === "") {
+                document.querySelector("#submit").disabled = true;
+            }
+            else
+            {
+                document.querySelector("#submit").disabled = false;
+            }
+        }
+    </script>
+{% endblock %}

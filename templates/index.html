@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block main %}
+     <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>Shares</th>
+                <th>Price</th>
+                <th>TOTAL</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <td><button class="btn btn-primary" type="button" id="add_more">Add more cash</button></td>
+                <td colspan="3"></td>
+                <td>${{ total_value }}</td>
+            </tr>
+        </tfoot>
+        <tbody>
+            {% for stock in stock_data %}
+            <tr>
+                <td>{{ stock["symbol"] }}</td>
+                <td>{{ stock["name"] }}</td>
+                <td>{{ stock["shares"] }}</td>
+                <td>${{ stock["price"] }}</td>
+                <td>${{ stock["shares_price"] }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <form action="/cash" method="post">
+                    <td>CASH</td>
+                    <td><input type="number" class="form-control" placeholder="Amount" id="cash" style="visibility:hidden;" name="cash"></td>
+                    <td><button class="btn btn-primary" type="submit" id="add" disabled style="visibility:hidden;">Add</button></td>
+                </form>
+                <td><button class="btn btn-primary" type="button" id="cancel" style="visibility:hidden;">Cancel</button></td>
+                <td>${{ cash }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+
+{% block script %}
+<script src="static/add_cash.js"></script>
+{% endblock %}
