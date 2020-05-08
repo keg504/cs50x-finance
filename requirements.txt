@@ -3,5 +3,3 @@ Flask
 Flask-Session
 requests
 gunicorn
-werkzeug.exceptions
-werkzeug.security
