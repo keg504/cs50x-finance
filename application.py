@@ -1,4 +1,7 @@
 import os
+import logging
+import sys
+from logging import Formatter
 
 from datetime import datetime
 from cs50 import SQL
@@ -9,6 +12,15 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology, login_required, lookup, usd
+
+def log_to_stderr(app):
+  handler = logging.StreamHandler(sys.stderr)
+  handler.setFormatter(Formatter(
+    '%(asctime)s %(levelname)s: %(message)s '
+    '[in %(pathname)s:%(lineno)d]'
+  ))
+  handler.setLevel(logging.WARNING)
+  app.logger.addHandler(handler)
 
 # Configure application
 app = Flask(__name__)
@@ -456,4 +468,5 @@ for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
+    log_to_stderr(app)
     app.run()
