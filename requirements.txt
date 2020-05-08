@@ -26,6 +26,8 @@ docutils==0.15.2
 EditorConfig==0.12.2
 Flask==1.1.1
 Flask-Session==0.3.1
+Flask-SQLAlchemy==2.4.0
+gunicorn==20.0.4
 help50==3.0.0
 html5lib==1.0.1
 icdiff==1.9.1
@@ -52,6 +54,7 @@ pandas==1.0.0
 pexpect==4.8.0
 Pillow==7.0.0
 plotly==4.5.0
+psycopg2-binary==2.8.4
 ptyprocess==0.6.0
 pyasn1==0.4.8
 pycodestyle==2.5.0
@@ -93,4 +96,3 @@ WeasyPrint==49
 webencodings==0.5.1
 Werkzeug==0.16.1
 wrapt==1.11.2
-gunicorn
