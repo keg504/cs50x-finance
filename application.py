@@ -52,7 +52,7 @@ db = SQL("postgres://shhdowemmmuznp:7ee8f235c605392a2c91d8c158a22518aad3362a7a07
 if not os.environ.get("API_KEY"):
     # Set API ke for the stock quote engine
     try:
-        os.environ["API_KEY"] = [pk_771aa03ef26749dc9d8009662d7ee804]
+        os.environ["API_KEY"] = ["pk_771aa03ef26749dc9d8009662d7ee804"]
     except:
         raise RuntimeError("API_KEY not set")
 
