@@ -171,6 +171,8 @@ def buy():
 
             # If stock already exists in portfolio, update the table with new value
             if (len(rows)>0):
+                shares_owned = rows[0]["shares"]
+                shares += shares_owned
                 db.execute("UPDATE portfolio SET shares=:shares WHERE user_id=:user_id AND symbol=:symbol", user_id=session["user_id"], symbol=symbol, shares=shares)
 
             # Insert new row into table if user doesn't already own the stock bought
