@@ -309,10 +309,10 @@ def register():
 
         # Query database for username to see if it already exists
         rows = db.execute("SELECT * FROM users WHERE username = :username",
-                          username=request.form.get("username")).fetchall()
+                          {"username":request.form.get("username")}).rowcount()
 
         # Check to see if username already exists and reject registration
-        if (len(rows)>0):
+        if (rows>0):
             return apology("username already exists", 409)
 
         # Enter username and hashed password into database if it doesn't already exist
