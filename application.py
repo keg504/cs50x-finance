@@ -325,7 +325,7 @@ def register():
             pass_hash = generate_password_hash(request.form.get("password"))
 
             # Insert user into users table
-            db.execute("INSERT INTO users(username, hash) VALUES(:username, :hashcode)", username=username, hashcode=pass_hash)
+            db.execute("INSERT INTO users(username, hash) VALUES(:username, :hashcode)", {"username":username, "hashcode":pass_hash})
 
             # Redirect user to home page
             return redirect("/login")
