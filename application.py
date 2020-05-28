@@ -98,11 +98,14 @@ def index():
                 shares = int(stock_data[i]["shares"])
                 shares_price_value = round(price*shares, 2)
                 shares_price_value_f = float(shares_price_value)
-                total_value += shares_price_value_f
+                total_value_f = float(total_value)
+                total_value_f += shares_price_value_f
                 price = "{:,.2f}".format(price)
                 shares_price = "{:,.2f}".format(shares_price_value)
                 stock_data[i].update({"shares_price":shares_price})
                 stock_data[i].update({"price":price})
+
+    total_value = total_value_f
 
     # Format value to make it standardised
     total_value = "{:,.2f}".format(total_value)
