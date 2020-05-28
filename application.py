@@ -74,14 +74,15 @@ def index():
     stock_data = []
 
     # Get cash owned by user from db
-    cash_row  = db.execute("SELECT cash FROM users WHERE id=:user_id", user_id=session["user_id"]).fetchone()
+    cash_row  = db.execute("SELECT cash FROM users WHERE id=:user_id", {"user_id":session["user_id"]}).fetchall()
     cash = cash_row[0]["cash"]
 
     # Get total value of all stocks and cash owned by the user
     total_value = cash
 
     # Get stocks in portfolio from db
-    stocks = db.execute("SELECT * FROM portfolio WHERE user_id=:user_id ORDER BY symbol", user_id=session["user_id"]).fetchall()
+    stocks = db.execute("SELECT * FROM portfolio WHERE user_id=:user_id ORDER BY symbol",
+        {"user_id":session["user_id"]}).fetchall()
 
     # Iterate through stocks to add data to stock list
     for i in range(len(stocks)):
@@ -146,7 +147,7 @@ def buy():
             return apology("no such stock", 404)
 
         # Retrieve cash amount in database
-        cash_row = db.execute("SELECT cash FROM users WHERE id=:user_id", user_id=session["user_id"]).fetchone()
+        cash_row = db.execute("SELECT cash FROM users WHERE id=:user_id", {"user_id":session["user_id"]}).fetchall()
         cash = float(cash_row[0]["cash"])
 
         # Make sure user has enough cash to buy the shares of that stock
@@ -164,27 +165,32 @@ def buy():
 
             # Update tables with relevant values
             # Update users table
-            db.execute("UPDATE users SET cash=:cash WHERE id=:user_id", user_id=session["user_id"], cash=cash)
+            db.execute("UPDATE users SET cash=:cash WHERE id=:user_id", {"user_id":session["user_id"], "cash":cash})
+            db.commit()
 
             # Update transactions table
             db.execute("INSERT INTO transactions(symbol, shares, price, transacted, user_id) VALUES(:symbol, :shares, :price, :transacted, :user_id)",
-            symbol=symbol, shares=shares, price=stock_info["price"], transacted=time, user_id=session["user_id"])
+                {"symbol":symbol, "shares":shares, "price":stock_info["price"], "transacted":time, "user_id":session["user_id"]})
+            db.commit()
 
             # Update portfolio table, checking if they already own shares of this stock
             # Query if they already own this stock
             rows = db.execute("SELECT * FROM portfolio WHERE user_id = :user_id AND symbol= :symbol",
-                          user_id=session["user_id"], symbol=symbol)
+                          {"user_id":session["user_id"], "symbol":symbol}).fetchall()
 
             # If stock already exists in portfolio, update the table with new value
             if (len(rows)>0):
                 shares_owned = rows[0]["shares"]
                 shares += shares_owned
-                db.execute("UPDATE portfolio SET shares=:shares WHERE user_id=:user_id AND symbol=:symbol", user_id=session["user_id"], symbol=symbol, shares=shares)
+                db.execute("UPDATE portfolio SET shares=:shares WHERE user_id=:user_id AND symbol=:symbol",
+                    {"user_id":session["user_id"], "symbol":symbol, "shares":shares})
+                db.commit()
 
             # Insert new row into table if user doesn't already own the stock bought
             else:
                 db.execute("INSERT INTO portfolio(symbol, shares, user_id) VALUES(:symbol, :shares, :user_id)",
-            symbol=symbol, shares=shares, user_id=session["user_id"])
+            {"symbol":symbol, "shares":shares, "user_id":session["user_id"]})
+                db.commit()
 
             # Return to homepage
             return redirect("/")
@@ -204,7 +210,7 @@ def history():
 
     # Get history of transactions by user from database
     transactions = db.execute("SELECT symbol, shares, price, transacted FROM transactions WHERE user_id = :user_id ORDER BY transacted",
-    user_id=session["user_id"]).fetchone()
+        {"user_id":session["user_id"]}).fetchall()
 
     # Append each transaction to transaction_history list
     for transaction in transactions:
@@ -309,7 +315,7 @@ def register():
 
         # Query database for username to see if it already exists
         user_exists = db.execute("SELECT username FROM users WHERE username = :username",
-                          {"username":request.form.get("username")}).fetchone()
+                          {"username":request.form.get("username")}).fetchall()
 
         # Check to see if username already exists and reject registration
         if user_exists:
@@ -325,7 +331,8 @@ def register():
             pass_hash = generate_password_hash(request.form.get("password"))
 
             # Insert user into users table
-            db.execute("INSERT INTO users(username, hash) VALUES(:username, :hashcode)", {"username":username, "hashcode":pass_hash})
+            db.execute("INSERT INTO users(username, hash) VALUES(:username, :hashcode)",
+                {"username":username, "hashcode":pass_hash})
             db.commit()
 
             # Redirect user to home page
@@ -374,11 +381,12 @@ def sell():
             return apology("no such stock", 404)
 
         # Retrieve shares amount in database
-        shares_row = db.execute("SELECT shares FROM portfolio WHERE user_id=:user_id AND symbol=:symbol", user_id=session["user_id"], symbol=symbol).fetchone()
+        shares_row = db.execute("SELECT shares FROM portfolio WHERE user_id=:user_id AND symbol=:symbol",
+            {"user_id":session["user_id"], "symbol":symbol}).fetchall()
         shares_owned = int(shares_row[0]["shares"])
 
         # Retrieve cash amount in database
-        cash_row = db.execute("SELECT cash FROM users WHERE id=:user_id", user_id=session["user_id"])
+        cash_row = db.execute("SELECT cash FROM users WHERE id=:user_id", {"user_id":session["user_id"]}).fetchall()
         cash = float(cash_row[0]["cash"])
 
         # Make sure user has enough shares owned to sell the shares of that stock
@@ -400,21 +408,25 @@ def sell():
 
             # Update tables with relevant values
             # Update users table
-            db.execute("UPDATE users SET cash=:cash WHERE id=:user_id", user_id=session["user_id"], cash=cash)
+            db.execute("UPDATE users SET cash=:cash WHERE id=:user_id", {"user_id":session["user_id"], "cash":cash})
+            db.commit()
 
             # Update transactions table
             db.execute("INSERT INTO transactions(symbol, shares, price, transacted, user_id) VALUES(:symbol, :shares, :price, :transacted, :user_id)",
-            symbol=symbol, shares=-shares, price=stock_info["price"], transacted=time, user_id=session["user_id"])
+                {"symbol":symbol, "shares":-shares, "price":stock_info["price"], "transacted":time, "user_id":session["user_id"]})
+            db.commit()
 
             # If shares owned of the stock is now zero, delete row from table
             if (shares_owned==0):
                 db.execute("DELETE FROM portfolio WHERE symbol = :symbol AND user_id = :user_id",
-                symbol=symbol, user_id=session["user_id"])
+                    {"symbol":symbol, "user_id":session["user_id"]})
+                db.commit()
 
             else:
                 # If stock already exists in portfolio, update the table with new value
                 db.execute("UPDATE portfolio SET shares=:shares WHERE user_id=:user_id AND symbol=:symbol",
-                user_id=session["user_id"], symbol=symbol, shares=shares_owned)
+                    {"user_id":session["user_id"], "symbol":symbol, "shares":shares_owned})
+                db.commit()
 
             # Return to homepage
             return redirect("/")
@@ -424,7 +436,8 @@ def sell():
 
         # Show list of symbols that user has
         # Get symbols that user has
-        symbols = db.execute("SELECT symbol FROM portfolio WHERE user_id=:user_id ORDER BY symbol", user_id=session["user_id"]).fetchall()
+        symbols = db.execute("SELECT symbol FROM portfolio WHERE user_id=:user_id ORDER BY symbol",
+            {"user_id":session["user_id"]}).fetchall()
 
         # Return page with list of symbols that user owns
         return render_template("sell.html", symbols=symbols)
@@ -442,7 +455,7 @@ def cash():
         return apology("cannot remove cash via that method", 400)
 
     # Get cash that user currently has in account
-    cash_row = db.execute("SELECT cash FROM users WHERE id=:user_id", user_id=session["user_id"]).fetchone()
+    cash_row = db.execute("SELECT cash FROM users WHERE id=:user_id", {"user_id":session["user_id"]}).fetchall()
     cash = float(cash_row[0]["cash"])
 
     # Update cash to new value
@@ -453,11 +466,13 @@ def cash():
 
     # Update values in database for user logged in
     # Update users table
-    db.execute("UPDATE users SET cash=:cash WHERE id=:user_id", user_id=session["user_id"], cash=cash)
+    db.execute("UPDATE users SET cash=:cash WHERE id=:user_id", {"user_id":session["user_id"], "cash":cash})
+    db.commit()
 
     # Update transactions table
     db.execute("INSERT INTO transactions(symbol, shares, price, transacted, user_id) VALUES(:symbol, :shares, :price, :transacted, :user_id)",
-    symbol="CASH", shares=value, price=value, transacted=time, user_id=session["user_id"])
+        {"symbol":"CASH", "shares":value, "price":value, "transacted":time, "user_id":session["user_id"]})
+    db.commit()
 
     # Return user to portfolio page
     return redirect("/")
