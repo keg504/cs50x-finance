@@ -51,7 +51,7 @@ Session(app)
 db = SQL("sqlite:///finance.db")
 
 # Link to Postgres database on Heroku
-DATABASE_URL = "postgres://shhdowemmmuznp:7ee8f235c605392a2c91d8c158a22518aad3362a7a07c8b942b5608c6d178753@ec2-52-207-25-133.compute-1.amazonaws.com:5432/d97g3jjeli2217"
+DATABASE_URL = "postgres://ubuvbqikbrxpnn:a1a9fe636c252e348e78c9c7931a54da1f17b15188ec085c080d653f32d6f166@ec2-34-206-31-217.compute-1.amazonaws.com:5432/d8gi6hrse8vm33"
 
 # Create engine object to manage connections to DB, and scoped session to separate user interactions with DB
 engine = create_engine(DATABASE_URL)
