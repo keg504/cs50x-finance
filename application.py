@@ -4,7 +4,7 @@ import sys
 from logging import Formatter
 
 from datetime import datetime
-from cs50 import SQL
+#from cs50 import SQL
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
@@ -234,7 +234,7 @@ def login():
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
-                          username=request.form.get("username")).fetchone()
+                          {"username":request.form.get("username")}).fetchone()
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
