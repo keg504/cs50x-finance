@@ -326,6 +326,7 @@ def register():
 
             # Insert user into users table
             db.execute("INSERT INTO users(username, hash) VALUES(:username, :hashcode)", {"username":username, "hashcode":pass_hash})
+            db.commit()
 
             # Redirect user to home page
             return redirect("/login")
