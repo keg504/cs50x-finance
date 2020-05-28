@@ -80,6 +80,7 @@ def index():
 
     # Get total value of all stocks and cash owned by the user
     total_value = cash
+    total_value_f = float(cash)
 
     # Get stocks in portfolio from db
     stocks = db.execute("SELECT * FROM portfolio WHERE user_id=:user_id ORDER BY symbol",
