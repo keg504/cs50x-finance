@@ -48,7 +48,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-#db = SQL("sqlite:///finance.db")
+db = SQL("sqlite:///finance.db")
 
 # Link to Postgres database on Heroku
 DATABASE_URL = "postgres://shhdowemmmuznp:7ee8f235c605392a2c91d8c158a22518aad3362a7a07c8b942b5608c6d178753@ec2-52-207-25-133.compute-1.amazonaws.com:5432/d97g3jjeli2217"
