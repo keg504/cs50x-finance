@@ -80,7 +80,7 @@ def index():
 
     # Get total value of all stocks and cash owned by the user
     total_value = cash
-    total_value_f = float(cash)
+    total_value_f = float(total_value)
 
     # Get stocks in portfolio from db
     stocks = db.execute("SELECT * FROM portfolio WHERE user_id=:user_id ORDER BY symbol",
@@ -99,7 +99,6 @@ def index():
                 shares = int(stock_data[i]["shares"])
                 shares_price_value = round(price*shares, 2)
                 shares_price_value_f = float(shares_price_value)
-                total_value_f = float(total_value)
                 total_value_f += shares_price_value_f
                 price = "{:,.2f}".format(price)
                 shares_price = "{:,.2f}".format(shares_price_value)
