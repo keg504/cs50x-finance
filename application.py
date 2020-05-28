@@ -4,6 +4,7 @@ import sys
 from logging import Formatter
 
 from datetime import datetime
+from decimal import Decimal
 #from cs50 import SQL
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -96,7 +97,9 @@ def index():
                 price = float(stock_info[data])
                 shares = int(stock_data[i]["shares"])
                 shares_price_value = round(price*shares, 2)
-                total_value += float(shares_price_value)
+                float(total_value)
+                float(shares_price_value)
+                total_value += shares_price_value
                 price = "{:,.2f}".format(price)
                 shares_price = "{:,.2f}".format(shares_price_value)
                 stock_data[i].update({"shares_price":shares_price})
